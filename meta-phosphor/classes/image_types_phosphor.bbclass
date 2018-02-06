@@ -181,13 +181,20 @@ do_make_ubi[depends] += " \
         mtd-utils-native:do_populate_sysroot \
         "
 
-do_generate_static() {
-	# Assemble the flash image
-	mk_nor_image ${IMGDEPLOYDIR}/${IMAGE_NAME}.static.mtd ${FLASH_SIZE}
+add_flash_pbl() {
+       # Hook for architechtures which have a primary bootloader, a bootloader
+       # which runs before U-Boot.
+       :
+}
+
+add_flash_uboot() {
 	dd bs=1k conv=notrunc seek=${FLASH_UBOOT_OFFSET} \
 		if=${DEPLOY_DIR_IMAGE}/u-boot.${UBOOT_SUFFIX} \
 		of=${IMGDEPLOYDIR}/${IMAGE_NAME}.static.mtd
 
+}
+
+add_flash_linux() {
 	dd bs=1k conv=notrunc seek=${FLASH_KERNEL_OFFSET} \
 		if=${DEPLOY_DIR_IMAGE}/${FLASH_KERNEL_IMAGE} \
 		of=${IMGDEPLOYDIR}/${IMAGE_NAME}.static.mtd
@@ -199,6 +206,15 @@ do_generate_static() {
 	dd bs=1k conv=notrunc seek=${FLASH_RWFS_OFFSET} \
 		if=rwfs.${OVERLAY_BASETYPE} \
 		of=${IMGDEPLOYDIR}/${IMAGE_NAME}.static.mtd
+}
+
+do_generate_static() {
+	# Assemble the flash image
+	mk_nor_image ${IMGDEPLOYDIR}/${IMAGE_NAME}.static.mtd ${FLASH_SIZE}
+	add_flash_pbl
+	add_flash_uboot
+	add_flash_linux
+
 	# File needed for generating non-standard legacy links below
 	cp rwfs.${OVERLAY_BASETYPE} ${IMGDEPLOYDIR}/rwfs.${OVERLAY_BASETYPE}
 
