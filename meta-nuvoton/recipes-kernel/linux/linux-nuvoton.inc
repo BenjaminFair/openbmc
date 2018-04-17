@@ -6,7 +6,10 @@ PROVIDES += "virtual/kernel"
 
 KCONFIG_MODE="--alldefconfig"
 
-KSRC ?= "git://github.com/openbmc/linux;protocol=git;branch=${KBRANCH}"
+KBRANCH = "boot-from-flash-4.17"
+SRCREV = "${AUTOREV}"
+
+KSRC = "git://github.com/BenjaminFair/linux;protocol=git;branch=${KBRANCH};"
 SRC_URI = "${KSRC}"
 SRC_URI_append_npcm7xx = " file://defconfig"
 
