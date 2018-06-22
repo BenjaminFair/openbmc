@@ -53,6 +53,7 @@ RDEPENDS_${PN}-updater += " \
     sdbusplus \
     virtual-obmc-image-manager \
     bash \
+    ${@d.getVar('PREFERRED_PROVIDER_u-boot-fw-utils', True) or 'u-boot-fw-utils'} \
 "
 RDEPENDS_${PN}-updater_append_df-obmc-ubi-fs = " \
     mtd-utils-ubifs \
